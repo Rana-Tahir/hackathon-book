@@ -1,0 +1,41 @@
+:root {
+  --ifm-color-primary: #1a73e8;
+  --ifm-color-primary-dark: #1666d1;
+  --ifm-color-primary-darker: #1560c5;
+  --ifm-color-primary-darkest: #114fa3;
+  --ifm-color-primary-light: #2e80eb;
+  --ifm-color-primary-lighter: #3a87ec;
+  --ifm-color-primary-lightest: #5c9cef;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #4dabf7;
+  --ifm-color-primary-dark: #2e9bf5;
+  --ifm-color-primary-darker: #1f93f4;
+  --ifm-color-primary-darkest: #0b79d9;
+  --ifm-color-primary-light: #6cbbf9;
+  --ifm-color-primary-lighter: #7bc3fa;
+  --ifm-color-primary-lightest: #acd9fc;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Chatbot z-index layers */
+:root {
+  --chatbot-z-fab: 1100;
+  --chatbot-z-panel: 1099;
+  --chatbot-z-tooltip: 1200;
+}
+
+/* Ensure chatbot sits above Docusaurus navbar (z-index: 200) */
+.navbar {
+  z-index: 200;
+}
+
+/* Chatbot overlay backdrop for mobile */
+@media (max-width: 480px) {
+  body.chatbot-open {
+    overflow: hidden;
+  }
+}

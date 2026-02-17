@@ -1,0 +1,222 @@
+/* ChatBot floating panel — minimal Docusaurus-matching design */
+
+.fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: var(--ifm-color-primary);
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.fab:hover {
+  transform: scale(1.08);
+  background: var(--ifm-color-primary-dark);
+}
+
+/* Chat panel */
+.panel {
+  position: fixed;
+  bottom: 92px;
+  right: 24px;
+  width: 380px;
+  max-height: 520px;
+  border-radius: 12px;
+  background: var(--ifm-background-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  z-index: 1099;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--ifm-color-primary);
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.closeBtn:hover {
+  opacity: 0.8;
+}
+
+/* Selected text indicator */
+.selectedText {
+  padding: 8px 12px;
+  background: var(--ifm-color-emphasis-100);
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  font-size: 12px;
+}
+
+.selectedText small {
+  color: var(--ifm-color-emphasis-600);
+  font-weight: 600;
+}
+
+.selectedText p {
+  margin: 4px 0 0;
+  font-style: italic;
+  color: var(--ifm-color-emphasis-700);
+  line-height: 1.4;
+}
+
+/* Messages area */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  min-height: 200px;
+  max-height: 340px;
+}
+
+.placeholder {
+  color: var(--ifm-color-emphasis-500);
+  text-align: center;
+  padding: 32px 16px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.message {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.user {
+  align-items: flex-end;
+}
+
+.assistant {
+  align-items: flex-start;
+}
+
+.bubble {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.user .bubble {
+  background: var(--ifm-color-primary);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.assistant .bubble {
+  background: var(--ifm-color-emphasis-100);
+  color: var(--ifm-font-color-base);
+  border-bottom-left-radius: 4px;
+}
+
+.sources {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+  padding-left: 4px;
+}
+
+.sources small {
+  color: var(--ifm-color-emphasis-500);
+  font-size: 11px;
+}
+
+/* Input area */
+.inputArea {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.inputArea textarea {
+  flex: 1;
+  resize: none;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  line-height: 1.4;
+  min-height: 38px;
+  max-height: 80px;
+}
+
+.inputArea textarea:focus {
+  outline: none;
+  border-color: var(--ifm-color-primary);
+}
+
+.inputArea button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--ifm-color-primary);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.inputArea button:hover:not(:disabled) {
+  background: var(--ifm-color-primary-dark);
+}
+
+.inputArea button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .panel {
+    width: calc(100vw - 16px);
+    right: 8px;
+    bottom: 80px;
+    max-height: 60vh;
+  }
+
+  .fab {
+    bottom: 16px;
+    right: 16px;
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+}

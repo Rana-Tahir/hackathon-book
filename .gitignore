@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Node.js / Docusaurus
+node_modules/
+docs/node_modules/
+docs/build/
+docs/.docusaurus/
+.cache-loader/
+
+# ROS 2
+code/ros2/build/
+code/ros2/install/
+code/ros2/log/
+
+# Unity
+code/simulation/unity/Library/
+code/simulation/unity/Temp/
+code/simulation/unity/Logs/
+code/simulation/unity/UserSettings/
+
+# Isaac Sim
+code/isaac/*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Backend
+backend/.venv/
+backend/.env
+
+# Environment
+.env
+.env.*
+*.key
+*.crt
+
+# Logs
+*.log

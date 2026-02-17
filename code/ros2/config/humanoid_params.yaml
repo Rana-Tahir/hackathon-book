@@ -1,0 +1,11 @@
+# Humanoid Base Parameters
+# Loaded by humanoid_bringup.launch.py
+
+joint_command_publisher:
+  ros__parameters:
+    publish_rate: 10.0        # Hz - joint command publishing rate
+    wave_amplitude: 0.5       # radians - demo sine wave amplitude
+
+joint_state_subscriber:
+  ros__parameters:
+    log_interval: 1.0         # seconds - rate-limit logging output
