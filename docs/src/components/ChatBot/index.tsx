@@ -117,7 +117,10 @@ export default function ChatBot({
       {isOpen && (
         <div className={styles.panel}>
           <div className={styles.header}>
-            <span>Book Assistant</span>
+            <span className={styles.headerTitle}>
+              <span className={styles.headerDot} />
+              AI Book Assistant
+            </span>
             <button onClick={() => setIsOpen(false)} className={styles.closeBtn}>
               ✕
             </button>
