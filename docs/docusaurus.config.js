@@ -24,8 +24,6 @@ const config = {
     locales: ['en'],
   },
 
-  themes: ['@docusaurus/theme-live-codeblock'],
-
   presets: [
     [
       'classic',
@@ -84,9 +82,6 @@ const config = {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
         additionalLanguages: ['bash', 'python', 'yaml', 'markup', 'json', 'docker'],
-      },
-      liveCodeBlock: {
-        playgroundPosition: 'bottom',
       },
       colorMode: {
         defaultMode: 'dark',
