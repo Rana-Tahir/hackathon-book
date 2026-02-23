@@ -102,19 +102,15 @@
 }
 
 /* ── Z-index stack (mobile sidebar fix) ─────────────────── */
-/* Navbar must be above content but below mobile sidebar drawer */
+/* Raise the navbar stacking context HIGH enough so the sidebar
+   drawer (which lives inside .navbar in the DOM) clears all content */
 .navbar {
-  z-index: 200;
+  z-index: 400;
 }
 
-/* Mobile sidebar drawer must sit above everything including body bg */
-.navbar-sidebar {
-  z-index: 300 !important;
-}
-
-/* Backdrop/overlay behind the sidebar but above content */
-.navbar-sidebar__backdrop {
-  z-index: 299 !important;
+/* Override Docusaurus overlay variable so sidebar uses 400 */
+:root {
+  --ifm-z-index-overlay: 400;
 }
 
 /* Prevent body fixed-bg from creating a blocking stacking context on mobile */
