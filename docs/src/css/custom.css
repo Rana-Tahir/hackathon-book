@@ -71,12 +71,25 @@
 }
 
 /* ── Navbar ─────────────────────────────────────────────── */
+/* Use ::before for blur so .navbar itself does NOT create a
+   stacking context — backdrop-filter on the element itself
+   traps the mobile sidebar drawer behind page content */
 [data-theme='dark'] .navbar {
-  background: rgba(6, 13, 26, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: transparent;
   border-bottom: 1px solid rgba(0, 212, 255, 0.12);
   box-shadow: 0 1px 0 rgba(0, 212, 255, 0.06), 0 4px 24px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+[data-theme='dark'] .navbar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 13, 26, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: -1;
+  pointer-events: none;
 }
 
 [data-theme='dark'] .navbar__title {
@@ -101,14 +114,9 @@
   color: #00d4ff;
 }
 
-/* ── Z-index stack (mobile sidebar fix) ─────────────────── */
-/* Raise the navbar stacking context HIGH enough so the sidebar
-   drawer (which lives inside .navbar in the DOM) clears all content */
-.navbar {
-  z-index: 400;
-}
-
-/* Override Docusaurus overlay variable so sidebar uses 400 */
+/* ── Z-index ─────────────────────────────────────────────── */
+/* Keep Docusaurus defaults — do NOT override navbar z-index
+   since backdrop-filter is now on ::before, not the element */
 :root {
   --ifm-z-index-overlay: 400;
 }
