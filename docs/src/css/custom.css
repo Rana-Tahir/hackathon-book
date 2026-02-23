@@ -101,9 +101,27 @@
   color: #00d4ff;
 }
 
-/* navbar z-index above chatbot fab */
+/* ── Z-index stack (mobile sidebar fix) ─────────────────── */
+/* Navbar must be above content but below mobile sidebar drawer */
 .navbar {
   z-index: 200;
+}
+
+/* Mobile sidebar drawer must sit above everything including body bg */
+.navbar-sidebar {
+  z-index: 300 !important;
+}
+
+/* Backdrop/overlay behind the sidebar but above content */
+.navbar-sidebar__backdrop {
+  z-index: 299 !important;
+}
+
+/* Prevent body fixed-bg from creating a blocking stacking context on mobile */
+@media (max-width: 996px) {
+  [data-theme='dark'] body {
+    background-attachment: scroll;
+  }
 }
 
 /* ── Sidebar ─────────────────────────────────────────────── */
