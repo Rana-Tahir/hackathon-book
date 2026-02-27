@@ -1,11 +1,11 @@
 """One-time embedding pipeline: book content → Qdrant vectors.
 
-Usage: python -m scripts.embed_content [--docs-root ../docs/docs]
+Usage: python -m scripts.embed_content [--docs-root ../docs]
 
 Compliant with §3.6 Minimal Embeddings Policy:
 - 600-token chunks, 50-token overlap
 - MD5 hash-based deduplication (skips unchanged chunks)
-- No redundant or duplicate content
+- Uses fastembed BAAI/bge-small-en-v1.5 (free, local, 384 dims)
 - Reports stats for Qdrant Free Tier monitoring
 """
 
@@ -17,7 +17,7 @@ from pathlib import Path
 # Add backend to path for imports
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from openai import OpenAI
+from fastembed import TextEmbedding
 from qdrant_client.http.models import PointStruct
 
 from app.config import settings
@@ -29,8 +29,8 @@ def main():
     parser = argparse.ArgumentParser(description="Embed book content into Qdrant")
     parser.add_argument(
         "--docs-root",
-        default=str(Path(__file__).resolve().parent.parent.parent / "docs" / "docs"),
-        help="Path to the docs/docs/ directory containing markdown chapters",
+        default=str(Path(__file__).resolve().parent.parent.parent / "docs"),
+        help="Path to the docs/ directory containing markdown chapters",
     )
     parser.add_argument(
         "--dry-run",
@@ -39,8 +39,11 @@ def main():
     )
     args = parser.parse_args()
 
-    # Initialize clients
-    openai_client = OpenAI(api_key=settings.openai_api_key)
+    # Load embedding model (downloaded once, cached locally)
+    print("Loading embedding model (BAAI/bge-small-en-v1.5)...")
+    embedding_model = TextEmbedding("BAAI/bge-small-en-v1.5")
+    print("Model ready.")
+
     qdrant = QdrantService(url=settings.qdrant_url, api_key=settings.qdrant_api_key)
     qdrant.ensure_collection()
 
@@ -51,7 +54,6 @@ def main():
     # Get existing hashes to skip unchanged content
     existing_hashes: set[str] = set()
     try:
-        # Scroll through existing points to get hashes
         records, _ = qdrant.client.scroll(
             collection_name=COLLECTION_NAME,
             limit=10000,
@@ -64,72 +66,68 @@ def main():
     except Exception:
         print("No existing embeddings found (fresh collection)")
 
-    # Process chapters
+    # Collect all new chunks first for batch embedding
     total_chunks = 0
     skipped_chunks = 0
-    new_chunks = 0
-    points_batch: list[PointStruct] = []
+    new_chunk_objects = []
 
     for ch in chapters:
         content = Path(ch["path"]).read_text(encoding="utf-8")
         chunks = chunk_markdown(content, ch["chapter"], ch["module"])
-
         for chunk in chunks:
             total_chunks += 1
-
-            # Skip unchanged chunks (incremental update)
             if chunk.metadata.content_hash in existing_hashes:
                 skipped_chunks += 1
-                continue
+            else:
+                new_chunk_objects.append(chunk)
 
-            new_chunks += 1
+    print(f"New chunks to embed: {len(new_chunk_objects)}")
 
-            if args.dry_run:
-                continue
+    if args.dry_run:
+        print("\n--- Embedding Pipeline Report ---")
+        print(f"Chapters processed: {len(chapters)}")
+        print(f"Total chunks: {total_chunks}")
+        print(f"Skipped (unchanged): {skipped_chunks}")
+        print(f"New embeddings: {len(new_chunk_objects)}")
+        print("\n(DRY RUN — no embeddings were actually created)")
+        return
 
-            # Generate embedding
-            response = openai_client.embeddings.create(
-                model="text-embedding-3-small",
-                input=chunk.content,
+    # Embed in batches of 64 (fastembed is optimised for batch processing)
+    BATCH = 64
+    upserted = 0
+    for i in range(0, len(new_chunk_objects), BATCH):
+        batch = new_chunk_objects[i : i + BATCH]
+        texts = [c.content for c in batch]
+
+        vectors = list(embedding_model.embed(texts))
+
+        points = [
+            PointStruct(
+                id=str(uuid.uuid4()),
+                vector=v.tolist(),
+                payload={
+                    "content": c.content,
+                    "module": c.metadata.module,
+                    "chapter": c.metadata.chapter,
+                    "section": c.metadata.section,
+                    "content_type": c.metadata.content_type,
+                    "content_hash": c.metadata.content_hash,
+                    "position": c.metadata.position,
+                },
             )
-            vector = response.data[0].embedding
+            for c, v in zip(batch, vectors)
+        ]
 
-            points_batch.append(
-                PointStruct(
-                    id=str(uuid.uuid4()),
-                    vector=vector,
-                    payload={
-                        "content": chunk.content,
-                        "module": chunk.metadata.module,
-                        "chapter": chunk.metadata.chapter,
-                        "section": chunk.metadata.section,
-                        "content_type": chunk.metadata.content_type,
-                        "content_hash": chunk.metadata.content_hash,
-                        "position": chunk.metadata.position,
-                    },
-                )
-            )
+        qdrant.upsert_points(points)
+        upserted += len(points)
+        print(f"  [{upserted}/{len(new_chunk_objects)}] Upserted {len(points)} points...")
 
-            # Batch upsert every 50 points
-            if len(points_batch) >= 50:
-                qdrant.upsert_points(points_batch)
-                print(f"  Upserted {len(points_batch)} points...")
-                points_batch = []
-
-    # Final batch
-    if points_batch:
-        qdrant.upsert_points(points_batch)
-
-    # Report
     print("\n--- Embedding Pipeline Report ---")
     print(f"Chapters processed: {len(chapters)}")
     print(f"Total chunks: {total_chunks}")
     print(f"Skipped (unchanged): {skipped_chunks}")
-    print(f"New embeddings: {new_chunks}")
+    print(f"New embeddings: {upserted}")
     print(f"Total in Qdrant: {qdrant.count()}")
-
-    if args.dry_run:
-        print("\n(DRY RUN — no embeddings were actually created)")
 
 
 if __name__ == "__main__":

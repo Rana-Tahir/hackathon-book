@@ -11,7 +11,7 @@ from qdrant_client.http.models import (
 )
 
 COLLECTION_NAME = "book_content"
-VECTOR_SIZE = 1536  # text-embedding-3-small
+VECTOR_SIZE = 384  # fastembed BAAI/bge-small-en-v1.5
 
 
 class QdrantService:

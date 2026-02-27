@@ -1,6 +1,7 @@
 """RAG query orchestration service (§3.1 compliant — book-only grounding)."""
 
-from openai import OpenAI
+import anthropic
+from fastembed import TextEmbedding
 
 from app.config import settings
 from app.services import qdrant as qdrant_mod
@@ -26,20 +27,28 @@ SELECTED_TEXT_PROMPT = """The user has selected this text from the book:
 
 Answer their question about this specific passage, using the broader context provided."""
 
+# Shared embedding model (loaded once at module level)
+_embedding_model: TextEmbedding | None = None
+
+
+def _get_embedding_model() -> TextEmbedding:
+    global _embedding_model
+    if _embedding_model is None:
+        _embedding_model = TextEmbedding("BAAI/bge-small-en-v1.5")
+    return _embedding_model
+
 
 class RAGService:
     """Orchestrates query embedding, vector search, and LLM answer generation."""
 
     def __init__(self) -> None:
-        self.openai = OpenAI(api_key=settings.openai_api_key)
+        self.client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
 
     def _embed_query(self, query: str) -> list[float]:
-        """Embed a user query using text-embedding-3-small."""
-        response = self.openai.embeddings.create(
-            model="text-embedding-3-small",
-            input=query,
-        )
-        return response.data[0].embedding
+        """Embed a user query using fastembed (BAAI/bge-small-en-v1.5, 384 dims)."""
+        model = _get_embedding_model()
+        vectors = list(model.embed([query]))
+        return vectors[0].tolist()
 
     def search(
         self,
@@ -69,7 +78,6 @@ class RAGService:
 
         Returns (answer_text, source_references).
         """
-        # Search with chapter boost if selected text provided
         search_chapter = chapter if selected_text else None
         results = self.search(
             query=message,
@@ -93,17 +101,12 @@ class RAGService:
             )
         context = "\n\n---\n\n".join(context_parts)
 
-        # Build messages
-        messages = [
-            {"role": "system", "content": SYSTEM_PROMPT.format(context=context)},
-        ]
-
-        # Add conversation history if available
+        # Build conversation messages
+        messages = []
         if history:
-            for msg in history[-4:]:  # Last 4 messages for context
+            for msg in history[-4:]:
                 messages.append({"role": msg["role"], "content": msg["content"]})
 
-        # Add selected text context if provided
         user_content = message
         if selected_text:
             user_content = (
@@ -114,24 +117,23 @@ class RAGService:
 
         messages.append({"role": "user", "content": user_content})
 
-        # Call LLM
-        response = self.openai.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=messages,
-            temperature=0.3,
+        # Call Claude Haiku
+        response = self.client.messages.create(
+            model="claude-haiku-4-5-20251001",
             max_tokens=800,
+            system=SYSTEM_PROMPT.format(context=context),
+            messages=messages,
         )
 
-        answer = response.choices[0].message.content
+        answer = response.content[0].text
 
-        # Format sources
         sources = [
             {
                 "chapter": r["chapter"],
                 "section": r["section"],
                 "relevance": r["relevance"],
             }
-            for r in results[:3]  # Top 3 sources
+            for r in results[:3]
         ]
 
         return answer, sources
