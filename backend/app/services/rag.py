@@ -1,6 +1,6 @@
 """RAG query orchestration service (§3.1 compliant — book-only grounding)."""
 
-import anthropic
+from groq import Groq
 from fastembed import TextEmbedding
 
 from app.config import settings
@@ -42,7 +42,7 @@ class RAGService:
     """Orchestrates query embedding, vector search, and LLM answer generation."""
 
     def __init__(self) -> None:
-        self.client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
+        self.client = Groq(api_key=settings.groq_api_key)
 
     def _embed_query(self, query: str) -> list[float]:
         """Embed a user query using fastembed (BAAI/bge-small-en-v1.5, 384 dims)."""
@@ -117,15 +117,17 @@ class RAGService:
 
         messages.append({"role": "user", "content": user_content})
 
-        # Call Claude Haiku
-        response = self.client.messages.create(
-            model="claude-haiku-4-5-20251001",
+        # Call Groq (Llama 3.3 70B — free tier)
+        response = self.client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
             max_tokens=800,
-            system=SYSTEM_PROMPT.format(context=context),
-            messages=messages,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT.format(context=context)},
+                *messages,
+            ],
         )
 
-        answer = response.content[0].text
+        answer = response.choices[0].message.content
 
         sources = [
             {

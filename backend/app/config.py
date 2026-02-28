@@ -11,7 +11,7 @@ class Settings:
     """Application settings loaded from environment variables."""
 
     def __init__(self) -> None:
-        self.anthropic_api_key: str = self._require("ANTHROPIC_API_KEY")
+        self.groq_api_key: str = self._require("GROQ_API_KEY")
         self.qdrant_url: str = self._require("QDRANT_URL")
         self.qdrant_api_key: str = self._require("QDRANT_API_KEY")
         self.neon_database_url: str = self._require("NEON_DATABASE_URL")
