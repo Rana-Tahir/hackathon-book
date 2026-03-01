@@ -1,0 +1,442 @@
+/* =========================================================
+   Physical AI Book — Premium Neon Dark Theme
+   Inspired by NVIDIA / Vercel / Linear design language
+   ========================================================= */
+
+/* ── Light mode ─────────────────────────────────────────── */
+:root {
+  --ifm-color-primary: #2563eb;
+  --ifm-color-primary-dark: #1d4ed8;
+  --ifm-color-primary-darker: #1e40af;
+  --ifm-color-primary-darkest: #1e3a8a;
+  --ifm-color-primary-light: #3b82f6;
+  --ifm-color-primary-lighter: #60a5fa;
+  --ifm-color-primary-lightest: #93c5fd;
+
+  --ifm-font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+  --ifm-font-family-monospace: 'SFMono-Regular', 'Fira Code', Consolas, monospace;
+  --ifm-code-font-size: 90%;
+  --ifm-line-height-base: 1.75;
+  --ifm-global-radius: 8px;
+
+  --docusaurus-highlighted-code-line-bg: rgba(37, 99, 235, 0.08);
+}
+
+/* ── Dark mode — Neon / Deep Space ─────────────────────── */
+[data-theme='dark'] {
+  /* Primary neon cyan-blue */
+  --ifm-color-primary: #00d4ff;
+  --ifm-color-primary-dark: #00b8e0;
+  --ifm-color-primary-darker: #00a3c7;
+  --ifm-color-primary-darkest: #007ea0;
+  --ifm-color-primary-light: #33ddff;
+  --ifm-color-primary-lighter: #66e6ff;
+  --ifm-color-primary-lightest: #99eeff;
+
+  /* Deep space backgrounds */
+  --ifm-background-color: #060d1a;
+  --ifm-background-surface-color: #0a1628;
+  --ifm-navbar-background-color: rgba(6, 13, 26, 0.85);
+  --ifm-footer-background-color: #050b15;
+  --ifm-sidebar-background: #080f1f;
+
+  /* Text */
+  --ifm-font-color-base: #e2e8f0;
+  --ifm-font-color-secondary: #94a3b8;
+  --ifm-heading-color: #f1f5f9;
+
+  /* Borders & emphasis */
+  --ifm-color-emphasis-100: #0f1d35;
+  --ifm-color-emphasis-200: #162035;
+  --ifm-color-emphasis-300: #1e3050;
+  --ifm-color-emphasis-400: #2a4270;
+  --ifm-color-emphasis-500: #4a6fa5;
+  --ifm-color-emphasis-600: #6a8fc5;
+  --ifm-color-emphasis-700: #94b4d8;
+  --ifm-color-emphasis-800: #b8cfe8;
+  --ifm-color-emphasis-900: #dce8f4;
+
+  --ifm-hr-border-color: #162035;
+  --ifm-toc-border-color: #162035;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 212, 255, 0.07);
+}
+
+/* ── Global typography ──────────────────────────────────── */
+[data-theme='dark'] body {
+  background-color: var(--ifm-background-color);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 212, 255, 0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(99, 102, 241, 0.03) 0%, transparent 60%);
+  background-attachment: fixed;
+}
+
+/* ── Navbar ─────────────────────────────────────────────── */
+/* Use ::before for blur so .navbar itself does NOT create a
+   stacking context — backdrop-filter on the element itself
+   traps the mobile sidebar drawer behind page content */
+[data-theme='dark'] .navbar {
+  background: transparent;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.12);
+  box-shadow: 0 1px 0 rgba(0, 212, 255, 0.06), 0 4px 24px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+[data-theme='dark'] .navbar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 13, 26, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+[data-theme='dark'] .navbar__title {
+  font-weight: 700;
+  font-size: 1rem;
+  background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.01em;
+}
+
+[data-theme='dark'] .navbar__link {
+  color: #94a3b8;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: color 0.2s;
+}
+
+[data-theme='dark'] .navbar__link:hover,
+[data-theme='dark'] .navbar__link--active {
+  color: #00d4ff;
+}
+
+/* ── Z-index ─────────────────────────────────────────────── */
+/* Keep Docusaurus defaults — do NOT override navbar z-index
+   since backdrop-filter is now on ::before, not the element */
+:root {
+  --ifm-z-index-overlay: 400;
+}
+
+/* Prevent body fixed-bg from creating a blocking stacking context on mobile */
+@media (max-width: 996px) {
+  [data-theme='dark'] body {
+    background-attachment: scroll;
+  }
+}
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+[data-theme='dark'] .theme-doc-sidebar-container {
+  background: #080f1f;
+  border-right: 1px solid rgba(0, 212, 255, 0.08);
+}
+
+[data-theme='dark'] .menu {
+  background: transparent;
+  padding: 0.5rem;
+}
+
+[data-theme='dark'] .menu__link {
+  color: #94a3b8;
+  font-size: 0.875rem;
+  font-weight: 400;
+  border-radius: 6px;
+  padding: 6px 12px;
+  transition: all 0.15s ease;
+}
+
+[data-theme='dark'] .menu__link:hover {
+  color: #e2e8f0;
+  background: rgba(0, 212, 255, 0.06);
+}
+
+[data-theme='dark'] .menu__link--active {
+  color: #00d4ff !important;
+  background: rgba(0, 212, 255, 0.1) !important;
+  font-weight: 600;
+  box-shadow: inset 2px 0 0 #00d4ff;
+}
+
+[data-theme='dark'] .menu__list-item-collapsible:hover {
+  background: rgba(0, 212, 255, 0.04);
+  border-radius: 6px;
+}
+
+[data-theme='dark'] .menu__caret::before {
+  border-color: #4a6fa5;
+}
+
+/* Sidebar category labels */
+[data-theme='dark'] .menu__list-item-collapsible > .menu__link {
+  color: #cbd5e1;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── Main content area ───────────────────────────────────── */
+[data-theme='dark'] .main-wrapper {
+  background: transparent;
+}
+
+[data-theme='dark'] article {
+  background: transparent;
+}
+
+/* Headings with neon glow on h1 */
+[data-theme='dark'] h1 {
+  color: #f1f5f9;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #f1f5f9 0%, #00d4ff 120%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme='dark'] h2 {
+  color: #e2e8f0;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+  padding-bottom: 0.4rem;
+  letter-spacing: -0.02em;
+}
+
+[data-theme='dark'] h3 {
+  color: #cbd5e1;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+[data-theme='dark'] h4, [data-theme='dark'] h5, [data-theme='dark'] h6 {
+  color: #94a3b8;
+}
+
+/* ── Links ───────────────────────────────────────────────── */
+[data-theme='dark'] a {
+  color: #00d4ff;
+  text-decoration: none;
+  transition: color 0.15s, text-shadow 0.15s;
+}
+
+[data-theme='dark'] a:hover {
+  color: #66e6ff;
+  text-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
+}
+
+/* ── Code blocks ─────────────────────────────────────────── */
+[data-theme='dark'] code {
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  color: #00d4ff;
+  border-radius: 4px;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.875em;
+  padding: 1px 6px;
+}
+
+[data-theme='dark'] .theme-code-block {
+  background: #0a1628 !important;
+  border: 1px solid rgba(0, 212, 255, 0.12);
+  border-radius: 10px !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 212, 255, 0.05);
+  overflow: hidden;
+}
+
+[data-theme='dark'] .theme-code-block pre {
+  background: #0a1628 !important;
+}
+
+/* Code block title bar */
+[data-theme='dark'] .theme-code-block > div:first-child {
+  background: #0f1d35 !important;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.1) !important;
+  color: #4a6fa5 !important;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.78rem;
+}
+
+/* Copy button */
+[data-theme='dark'] .clean-btn[class*="copyButton"] {
+  color: #4a6fa5;
+  transition: color 0.2s;
+}
+
+[data-theme='dark'] .clean-btn[class*="copyButton"]:hover {
+  color: #00d4ff;
+}
+
+/* ── Admonitions / callouts ─────────────────────────────── */
+[data-theme='dark'] .alert {
+  border-radius: 8px;
+  border-left-width: 3px;
+}
+
+[data-theme='dark'] .alert--info {
+  background: rgba(0, 212, 255, 0.06);
+  border-color: #00d4ff;
+  color: #cbd5e1;
+}
+
+[data-theme='dark'] .alert--warning {
+  background: rgba(251, 191, 36, 0.06);
+  border-color: #f59e0b;
+  color: #cbd5e1;
+}
+
+[data-theme='dark'] .alert--danger {
+  background: rgba(239, 68, 68, 0.06);
+  border-color: #ef4444;
+  color: #cbd5e1;
+}
+
+[data-theme='dark'] .alert--success {
+  background: rgba(16, 185, 129, 0.06);
+  border-color: #10b981;
+  color: #cbd5e1;
+}
+
+/* ── Table of contents (right rail) ─────────────────────── */
+[data-theme='dark'] .table-of-contents {
+  border-left: 1px solid rgba(0, 212, 255, 0.1);
+}
+
+[data-theme='dark'] .table-of-contents__link {
+  color: #64748b;
+  font-size: 0.8rem;
+  transition: color 0.15s;
+}
+
+[data-theme='dark'] .table-of-contents__link:hover,
+[data-theme='dark'] .table-of-contents__link--active {
+  color: #00d4ff;
+}
+
+/* ── Tables ──────────────────────────────────────────────── */
+[data-theme='dark'] table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+[data-theme='dark'] th {
+  background: rgba(0, 212, 255, 0.08);
+  color: #00d4ff;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+[data-theme='dark'] td {
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: #cbd5e1;
+}
+
+[data-theme='dark'] tr:hover td {
+  background: rgba(0, 212, 255, 0.03);
+}
+
+/* ── Pagination (prev/next) ──────────────────────────────── */
+[data-theme='dark'] .pagination-nav__link {
+  background: #0a1628;
+  border: 1px solid rgba(0, 212, 255, 0.12);
+  border-radius: 10px;
+  transition: all 0.2s;
+}
+
+[data-theme='dark'] .pagination-nav__link:hover {
+  border-color: rgba(0, 212, 255, 0.4);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+}
+
+[data-theme='dark'] .pagination-nav__sublabel {
+  color: #4a6fa5;
+  font-size: 0.75rem;
+}
+
+[data-theme='dark'] .pagination-nav__label {
+  color: #00d4ff;
+  font-weight: 600;
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+[data-theme='dark'] .footer {
+  background: #050b15;
+  border-top: 1px solid rgba(0, 212, 255, 0.08);
+  color: #4a6fa5;
+}
+
+/* ── Breadcrumbs ─────────────────────────────────────────── */
+[data-theme='dark'] .breadcrumbs__item--active .breadcrumbs__link {
+  color: #00d4ff;
+  background: transparent;
+}
+
+[data-theme='dark'] .breadcrumbs__link {
+  color: #4a6fa5;
+}
+
+/* ── Scrollbar (webkit) ─────────────────────────────────── */
+[data-theme='dark'] ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: #1e3050;
+  border-radius: 3px;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 212, 255, 0.3);
+}
+
+/* ── Search ──────────────────────────────────────────────── */
+[data-theme='dark'] .DocSearch-Button {
+  background: rgba(0, 212, 255, 0.05) !important;
+  border: 1px solid rgba(0, 212, 255, 0.12) !important;
+  border-radius: 8px !important;
+  color: #4a6fa5 !important;
+  transition: all 0.2s !important;
+}
+
+[data-theme='dark'] .DocSearch-Button:hover {
+  border-color: rgba(0, 212, 255, 0.3) !important;
+  color: #00d4ff !important;
+}
+
+/* ── Chatbot z-index layers ──────────────────────────────── */
+:root {
+  --chatbot-z-fab: 1100;
+  --chatbot-z-panel: 1099;
+  --chatbot-z-tooltip: 1200;
+}
+
+/* Mobile overlay */
+@media (max-width: 480px) {
+  body.chatbot-open {
+    overflow: hidden;
+  }
+}
+
+/* ── Neon glow utility animations ────────────────────────── */
+@keyframes neonPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(0, 212, 255, 0.3); }
+  50%       { box-shadow: 0 0 16px rgba(0, 212, 255, 0.6); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
